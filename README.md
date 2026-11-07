@@ -28,7 +28,7 @@ Persyaratan: Node.js 24.x, npm, dan proyek Supabase. Versi ini dipakai agar coco
 
 ## Menyiapkan konten acara
 
-Demo lokal berisi enam pertanyaan dan 30 jawaban karangan. Seed menandai konten lokal siap dimainkan agar Start, Next Question, Finish, skor, dan reset dapat dicoba. Di database acara, setiap pertanyaan harus memiliki judul, tepat lima jawaban dengan poin positif, serta `content_verified = true` setelah diperiksa penyelenggara. Jangan gunakan atau menandai konten demo sebagai hasil survei terverifikasi.
+Setup tes berisi tujuh pertanyaan dengan lima jawaban per pertanyaan. Poin sementara mengikuti urutan jawaban (50/40/30/20/10) agar alur permainan bisa dicoba; angka ini bukan hasil survei. Sebelum acara resmi, ganti dengan poin survei yang benar dan set `content_verified = true` hanya setelah penyelenggara memeriksa pertanyaan, jawaban, dan poin.
 
 ## Pemeriksaan dan produksi
 
@@ -52,4 +52,4 @@ HOST_PIN
 HOST_RATE_LIMIT_SALT
 ```
 
-Gunakan nilai Supabase Cloud dari `.env.local`, bukan `.env.development.local`. Jangan commit atau membagikan nilai rahasia. `SUPABASE_DB_PASSWORD` dan `SUPABASE_DB_URL` hanya untuk operasi CLI/migrasi lokal—jangan masukkan ke Vercel. Pastikan `SUPABASE_SECRET_KEY` tetap server-only dan tidak diberi prefix `NEXT_PUBLIC_`.
+Gunakan nilai Supabase Cloud dari `.env.local`, bukan `.env.development.local`. Jangan commit atau membagikan nilai rahasia. `SUPABASE_DB_PASSWORD` dan `SUPABASE_DB_URL` hanya untuk operasi CLI/migrasi—jangan masukkan ke Vercel. Pastikan `SUPABASE_SECRET_KEY` tetap server-only dan tidak diberi prefix `NEXT_PUBLIC_`.

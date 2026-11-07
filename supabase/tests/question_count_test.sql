@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(18);
+select plan(20);
 
 delete from public.host_lease where singleton;
 delete from public.host_sessions where token_hash = repeat('b', 64);
@@ -32,21 +32,21 @@ select
   'Test answer ' || q.position::text || '-' || a.position::text,
   a.points
 from public.questions q
-cross join (values (1, 50), (2, 30), (3, 20), (4, 15), (5, 5)) as a(position, points)
+cross join (values (1, 50), (2, 40), (3, 30), (4, 20), (5, 10)) as a(position, points)
 where q.position between 3 and 6;
 
-select is((select count(*)::integer from public.questions), 6, 'six contiguous questions are accepted');
-select is((select count(*)::integer from public.answers), 30, 'each question has five answers');
+select is((select count(*)::integer from public.questions), 7, 'seven contiguous questions are accepted');
+select is((select count(*)::integer from public.answers), 35, 'each question has five answers');
 select lives_ok(
   $$select public.apply_game_action(
     repeat('b', 64), '00000000-0000-4000-8000-000000000031', 0,
     'start_game', null, null, null
   )$$,
-  'complete content starts a six-question game'
+  'complete content starts a seven-question game'
 );
 select is(public.game_snapshot() ->> 'status', 'IN_PROGRESS', 'game starts');
 select is(public.game_snapshot() ->> 'activeQuestionId', 'q1', 'question one starts active');
-select is((public.game_snapshot() ->> 'questionCount')::integer, 6, 'snapshot reports the configured question count');
+select is((public.game_snapshot() ->> 'questionCount')::integer, 7, 'snapshot reports the configured question count');
 
 select lives_ok(
   $$select public.apply_game_action(
@@ -91,11 +91,19 @@ select is(public.game_snapshot() ->> 'activeQuestionId', 'q6', 'question six bec
 select lives_ok(
   $$select public.apply_game_action(
     repeat('b', 64), '00000000-0000-4000-8000-000000000037', 6,
+    'next_question', null, null, null
+  )$$,
+  'question six advances'
+);
+select is(public.game_snapshot() ->> 'activeQuestionId', 'q7', 'question seven becomes active');
+select lives_ok(
+  $$select public.apply_game_action(
+    repeat('b', 64), '00000000-0000-4000-8000-000000000038', 7,
     'finish_game', null, null, null
   )$$,
-  'game can finish on its final configured question'
+  'game can finish on its seventh configured question'
 );
-select is(public.game_snapshot() ->> 'status', 'COMPLETED', 'game finishes after question six');
+select is(public.game_snapshot() ->> 'status', 'COMPLETED', 'game finishes after question seven');
 
 select * from finish();
 rollback;
