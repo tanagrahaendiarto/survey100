@@ -825,7 +825,7 @@ button:disabled {
 
 .display-question {
   grid-area: question;
-  max-width: 1120px;
+  max-width: 1480px;
   margin: clamp(2px, 0.5vh, 6px) auto clamp(4px, 1vh, 12px);
   color: #fff;
   font: 900 clamp(30px, 4.5vw, 72px) / 1.03 var(--display);
