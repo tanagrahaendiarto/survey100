@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(35);
+select plan(40);
 
 delete from public.host_lease where singleton;
 delete from public.host_sessions where token_hash = repeat('a', 64);
@@ -214,6 +214,20 @@ select lives_ok(
   'game can start again after reset'
 );
 select is(public.game_snapshot() ->> 'activeQuestionId', 'q1', 'starting again begins at question one');
+
+update public.game_state set status = 'COMPLETED' where singleton;
+select lives_ok(
+  $$select public.apply_game_action(
+    repeat('a', 64), '00000000-0000-4000-8000-000000000014', 10,
+    'restart_game', null, null
+  )$$,
+  'restart succeeds from the completed state'
+);
+select is(public.game_snapshot() ->> 'status', 'IN_PROGRESS', 'completed game restart starts immediately');
+select is(public.game_snapshot() ->> 'activeQuestionId', 'q1', 'completed game restart selects question one');
+select is(public.game_snapshot() ->> 'version', '11', 'completed game restart increments the version');
+select is((public.game_snapshot() ? 'scores') or (public.game_snapshot() ? 'teams'), false,
+  'completed game restart does not restore scores or teams');
 
 select * from finish();
 rollback;

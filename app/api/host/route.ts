@@ -47,6 +47,13 @@ export async function POST(request: Request) {
     });
 
     if (error) {
+      // Keep diagnostics useful without ever logging the Host credential/token.
+      console.warn("apply_game_action failed", {
+        action: command.action,
+        expectedVersion: command.expectedVersion,
+        code: error.code ?? null,
+        message: error.message,
+      });
       return gameError(error.message);
     }
 
