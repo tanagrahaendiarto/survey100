@@ -20,7 +20,7 @@ async function snapshot(supabase: SupabaseClient): Promise<Snapshot> {
 async function question(supabase: SupabaseClient, id: string) {
   const { data, error } = await supabase
     .from("questions")
-    .select("id, position, title")
+    .select("id, position, title, content_verified")
     .eq("id", id)
     .single();
   if (error) throw error;
@@ -30,6 +30,7 @@ async function question(supabase: SupabaseClient, id: string) {
 export async function publicGame(supabase: SupabaseClient) {
   const state = await snapshot(supabase);
   const active = await question(supabase, state.activeQuestionId);
+  const contentVerified = active.content_verified && Boolean(active.title.trim());
   let answers: {
     id: string;
     position: number;
@@ -37,7 +38,7 @@ export async function publicGame(supabase: SupabaseClient) {
     points: number;
   }[] = [];
 
-  if (state.revealedAnswerIds.length) {
+  if (contentVerified && state.revealedAnswerIds.length) {
     const { data, error } = await supabase
       .from("revealed_answers")
       .select("answer_id, answer_position, answer_text, points_awarded")
@@ -57,7 +58,9 @@ export async function publicGame(supabase: SupabaseClient) {
     question: {
       id: active.id,
       position: active.position,
-      title: active.title || "Menunggu materi survei dari UNPAD.",
+      title: contentVerified
+        ? active.title
+        : "Menunggu materi survei yang sudah diverifikasi.",
       answers: [],
     },
     revealedAnswers: answers,

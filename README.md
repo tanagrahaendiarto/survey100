@@ -4,7 +4,7 @@ Aplikasi permainan survei interaktif untuk Host dan layar Display. State game di
 
 ## Menjalankan di komputer lokal
 
-Persyaratan: Node.js 20.9 atau lebih baru, npm, dan proyek Supabase.
+Persyaratan: Node.js 24.x, npm, dan proyek Supabase. Versi ini dipakai agar cocok dengan Supabase JS yang digunakan project.
 
 1. Pasang dependensi:
 
@@ -39,3 +39,17 @@ npm run start
 ```
 
 Tes database lokal tersedia melalui `supabase test db` setelah Supabase lokal berjalan.
+
+## Deploy ke Vercel
+
+Import repo GitHub ini sebagai project Next.js dengan Root Directory `./`. Vercel mendeteksi build Next.js secara otomatis. Tambahkan environment variables berikut di pengaturan project Vercel (minimal untuk Production):
+
+```text
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+SUPABASE_SECRET_KEY
+HOST_PIN
+HOST_RATE_LIMIT_SALT
+```
+
+Gunakan nilai Supabase Cloud dari `.env.local`, bukan `.env.development.local`. Jangan commit atau membagikan nilai rahasia. `SUPABASE_DB_PASSWORD` dan `SUPABASE_DB_URL` hanya untuk operasi CLI/migrasi lokal—jangan masukkan ke Vercel. Pastikan `SUPABASE_SECRET_KEY` tetap server-only dan tidak diberi prefix `NEXT_PUBLIC_`.
