@@ -142,7 +142,7 @@ select lives_ok(
   )$$,
   'manual next question succeeds'
 );
-select is(public.game_snapshot() ->> 'activeQuestionId', 'q2', 'next question becomes active');
+select is(public.game_snapshot() ->> 'activeQuestionId', 'q4', 'next question follows the configured order');
 select throws_ok(
   $$select public.apply_game_action(
     repeat('a', 64), '00000000-0000-4000-8000-000000000008', 5,
@@ -159,7 +159,7 @@ select lives_ok(
   'reset question succeeds'
 );
 select is(
-  (select count(*)::integer from public.revealed_answers where question_id = 'q2'),
+  (select count(*)::integer from public.revealed_answers where question_id = 'q4'),
   0,
   'reset question closes its answers'
 );
