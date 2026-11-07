@@ -13,9 +13,11 @@ import {
 
 export default function DisplayPage() {
   const { game, connection, realtime, error } = useGame();
+  const [wrong, setWrong] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const audioEnabledRef = useRef(false);
   const audioContext = useRef<AudioContext | null>(null);
+  const wrongFlashTimer = useRef<number | null>(null);
   const previousStatus = useRef<string | null>(null);
   const pendingCompletionSound = useRef(false);
 
@@ -32,16 +34,26 @@ export default function DisplayPage() {
         if (
           typeof eventId !== "string" ||
           seen.has(eventId) ||
-          sound !== "correct"
+          (sound !== "correct" && sound !== "wrong")
         )
           return;
         seen.add(eventId);
         if (seen.size > 100) seen.delete(seen.values().next().value!);
+        if (sound === "wrong") {
+          setWrong(true);
+          if (wrongFlashTimer.current !== null) {
+            window.clearTimeout(wrongFlashTimer.current);
+          }
+          wrongFlashTimer.current = window.setTimeout(() => {
+            wrongFlashTimer.current = null;
+            setWrong(false);
+          }, 800);
+        }
         if (
           audioEnabledRef.current &&
           audioContext.current?.state === "running"
         ) {
-          void playGameAudio(audioContext.current, "correct");
+          void playGameAudio(audioContext.current, sound);
         }
       })
       .subscribe();
@@ -87,7 +99,11 @@ export default function DisplayPage() {
       await context.resume();
       audioEnabledRef.current = true;
       setAudioEnabled(true);
-      void preloadGameAudio(context, ["correct", "game-complete"]);
+      void preloadGameAudio(context, [
+        "correct",
+        "wrong",
+        "game-complete",
+      ]);
       if (pendingCompletionSound.current) {
         pendingCompletionSound.current = false;
         void playGameAudio(context, "game-complete");
@@ -101,13 +117,16 @@ export default function DisplayPage() {
   useEffect(
     () => () => {
       audioEnabledRef.current = false;
+      if (wrongFlashTimer.current !== null) {
+        window.clearTimeout(wrongFlashTimer.current);
+      }
       if (audioContext.current) void audioContext.current.close();
     },
     [],
   );
 
   return (
-    <main className="display-shell">
+    <main className={`display-shell ${wrong ? "wrong-flash" : ""}`}>
       <header className="display-header">
         <Link className="nav-brand" href="/">
           <span className="brand-mark">TS</span> TOP SURVEY

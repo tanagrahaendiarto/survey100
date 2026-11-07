@@ -109,6 +109,20 @@ export default function HostPage() {
     if (soundError) setMessage(`Jawaban dibuka. ${soundError}`);
   }
 
+  async function sendWrong() {
+    const sound: BroadcastSound = "wrong";
+    const context = getGameAudioContext(audioContext.current);
+    audioContext.current = context;
+    if (context) {
+      void context.resume().catch(() => undefined);
+      void preloadGameAudio(context, [sound]);
+      void playGameAudio(context, sound);
+    }
+
+    const soundError = await broadcastSound(sound);
+    setMessage(soundError || "Tanda jawaban salah dikirim ke Display.");
+  }
+
   async function broadcastSound(sound: BroadcastSound) {
     try {
       const response = await fetch("/api/host/sound", {
@@ -195,6 +209,8 @@ export default function HostPage() {
         setSelected(currentQuestion.answers[Number(event.key) - 1]?.id ?? null);
       } else if (event.key === "Enter") {
         void openAnswer();
+      } else if (event.key.toLowerCase() === "x") {
+        void sendWrong();
       } else if (event.key === "Escape") {
         setSelected(null);
       } else if (
@@ -389,6 +405,13 @@ export default function HostPage() {
             </p>
             <div className="control-divider" />
             <div className="utility-grid">
+              <button
+                className="small-button wrong-button"
+                onClick={() => void sendWrong()}
+                disabled={unavailable}
+              >
+                X · Salah
+              </button>
               <button
                 className="small-button"
                 onClick={() => void runAction("undo")}

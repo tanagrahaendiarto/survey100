@@ -5,7 +5,7 @@ import { backendError, isSameOrigin, json } from "@/lib/http";
 import type { BroadcastSound } from "@/lib/game-audio";
 
 function isBroadcastSound(value: unknown): value is BroadcastSound {
-  return value === "correct";
+  return value === "correct" || value === "wrong";
 }
 
 export async function POST(request: Request) {
