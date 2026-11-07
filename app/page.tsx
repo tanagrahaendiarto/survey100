@@ -20,8 +20,7 @@ export default function HomePage() {
           <em>kamu tahu?</em>
         </h1>
         <p className="hero-copy">
-          Dua tim. Lima jawaban tersembunyi. Satu papan permainan—siap untuk
-          malam yang seru.
+          Buka jawaban survei satu per satu dan tampilkan langsung di layar.
         </p>
         <div className="entry-actions">
           <Link className="button button-primary" href="/host">
@@ -33,8 +32,8 @@ export default function HomePage() {
         </div>
         <div className="hero-meta">
           <span>SOAL DINAMIS</span>
-          <span>02 TIM</span>
-          <span>05 JAWABAN PER BABAK</span>
+          <span>JAWABAN LIVE</span>
+          <span>LAYAR DISPLAY</span>
         </div>
       </section>
       <div className="landing-foot">

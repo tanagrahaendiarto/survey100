@@ -34,7 +34,7 @@ const gameErrors: Record<string, { status: number; message: string }> = {
   ANSWER_NOT_FOUND: { status: 404, message: "Jawaban tidak ditemukan." },
   CONTENT_NOT_READY: {
     status: 422,
-    message: "Konten tiga pertanyaan belum lengkap atau diverifikasi.",
+    message: "Konten pertanyaan belum lengkap atau diverifikasi.",
   },
   GAME_NOT_INITIALIZED: {
     status: 503,

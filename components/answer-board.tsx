@@ -7,7 +7,7 @@ export function AnswerBoard({
   state: GameView;
   display?: boolean;
 }) {
-  const { question, scores } = state;
+  const { question } = state;
   const questionCount = String(state.questionCount).padStart(2, "0");
 
   if (display) {
@@ -20,14 +20,6 @@ export function AnswerBoard({
           PERTANYAAN {String(question.position).padStart(2, "0")} / {questionCount}
         </div>
         <h1 className="display-question">{question.title}</h1>
-        <aside
-          className="display-team-score display-team-score-a"
-          aria-label={`Skor Tim A: ${scores.A} poin`}
-        >
-          <span className="display-team-score-label">TIM A</span>
-          <strong className="display-team-score-value">{scores.A}</strong>
-          <span className="display-team-score-caption">POIN</span>
-        </aside>
         <div className="display-answers">
           {[1, 2, 3, 4, 5].map((position) => {
             const answer = opened.get(position);
@@ -42,21 +34,10 @@ export function AnswerBoard({
                 <span className="display-answer-text">
                   {answer?.text ?? ""}
                 </span>
-                <span className="display-answer-points">
-                  {answer?.points ?? ""}
-                </span>
               </div>
             );
           })}
         </div>
-        <aside
-          className="display-team-score display-team-score-b"
-          aria-label={`Skor Tim B: ${scores.B} poin`}
-        >
-          <span className="display-team-score-label">TIM B</span>
-          <strong className="display-team-score-value">{scores.B}</strong>
-          <span className="display-team-score-caption">POIN</span>
-        </aside>
         <div className="display-footer">
           <span>STUDI BANDING 2026</span>
         </div>
@@ -76,16 +57,6 @@ export function AnswerBoard({
         </div>
         <span className="status-pill">{state.status}</span>
       </div>
-      <div className="board-score">
-        <div className="score-card team-a">
-          <span className="score-name">TIM A</span>
-          <strong className="score-value">{scores.A}</strong>
-        </div>
-        <div className="score-card team-b">
-          <span className="score-name">TIM B</span>
-          <strong className="score-value">{scores.B}</strong>
-        </div>
-      </div>
       <div className="answer-list">
         {question.answers.map((answer) => {
           const isOpen = opened.has(answer.id);
@@ -96,7 +67,6 @@ export function AnswerBoard({
             >
               <span className="answer-number">{answer.position}</span>
               <span className="answer-text">{answer.text}</span>
-              <span className="answer-points">{answer.points}</span>
             </div>
           );
         })}

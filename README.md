@@ -1,6 +1,6 @@
 # Top Survey
 
-Aplikasi permainan survei interaktif untuk Host dan layar Display. State game disimpan di Supabase; Host mengubah state melalui API server, sedangkan Display hanya menerima jawaban yang sudah dibuka.
+Aplikasi papan jawaban survei untuk Host dan layar Display. State disimpan di Supabase; Host membuka jawaban melalui API server, sedangkan Display hanya menerima jawaban yang sudah dibuka.
 
 ## Menjalankan di komputer lokal
 
@@ -14,7 +14,7 @@ Persyaratan: Node.js 24.x, npm, dan proyek Supabase. Versi ini dipakai agar coco
 
 2. Salin `.env.example` ke `.env.local`, lalu isi URL Supabase, publishable key, secret key, PIN Host, dan `HOST_RATE_LIMIT_SALT` acak minimal 16 karakter. Jangan pernah menaruh secret key dengan awalan `NEXT_PUBLIC_`.
 
-3. Siapkan database. Untuk Supabase lokal, jalankan `supabase start`; migrasi dan `supabase/seed.sql` akan diterapkan oleh konfigurasi lokal. Seed menyiapkan enam pertanyaan DEMO karangan dengan lima jawaban per pertanyaan agar alur permainan bisa dicoba dari awal sampai akhir. Konten ini bukan hasil survei acara. Untuk proyek Cloud, tinjau dan terapkan migrasi melalui prosedur rilis proyek; jangan gunakan seed demo.
+3. Siapkan database. Untuk Supabase lokal, jalankan `supabase start`; migrasi dan `supabase/seed.sql` akan diterapkan oleh konfigurasi lokal. Seed menyiapkan tujuh pertanyaan DEMO karangan dengan lima jawaban per pertanyaan agar alur bisa dicoba dari awal sampai akhir. Konten ini bukan hasil survei acara. Untuk proyek Cloud, tinjau dan terapkan migrasi melalui prosedur rilis proyek; jangan gunakan seed demo.
 
 4. Jalankan web:
 
@@ -28,7 +28,7 @@ Persyaratan: Node.js 24.x, npm, dan proyek Supabase. Versi ini dipakai agar coco
 
 ## Menyiapkan konten acara
 
-Setup tes berisi tujuh pertanyaan dengan lima jawaban per pertanyaan. Poin sementara mengikuti urutan jawaban (50/40/30/20/10) agar alur permainan bisa dicoba; angka ini bukan hasil survei. Sebelum acara resmi, ganti dengan poin survei yang benar dan set `content_verified = true` hanya setelah penyelenggara memeriksa pertanyaan, jawaban, dan poin.
+Setup tes berisi tujuh pertanyaan dengan lima jawaban per pertanyaan. Tidak ada poin atau pengelompokan tim; Host dapat membuka jawaban dan mengulang sesi dari Pertanyaan 1. Set `content_verified = true` hanya setelah penyelenggara memeriksa pertanyaan dan jawaban.
 
 ## Pemeriksaan dan produksi
 

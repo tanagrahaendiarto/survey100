@@ -1,10 +1,8 @@
-export type BroadcastSound = "correct" | "wrong-a" | "wrong-b";
+export type BroadcastSound = "correct";
 export type GameAudioCue = BroadcastSound | "game-complete";
 
 const audioFiles: Record<GameAudioCue, string> = {
   correct: "/audio/correct.mp3",
-  "wrong-a": "/audio/wrong-a.mp3",
-  "wrong-b": "/audio/wrong-b.mp3",
   "game-complete": "/audio/game-complete.mp3",
 };
 

@@ -107,7 +107,7 @@ export function useGame(host = false) {
   const act = useCallback(
     async (
       action: GameAction,
-      details: Pick<GameCommand, "questionId" | "answerId" | "team"> = {},
+      details: Pick<GameCommand, "questionId" | "answerId"> = {},
     ) => {
       if (!host || !game) return { ok: false, error: "Game belum siap." };
 

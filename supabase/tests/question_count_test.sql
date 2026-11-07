@@ -24,15 +24,14 @@ set title = case
     end,
     content_verified = true;
 delete from public.answers where question_id in ('q3', 'q4', 'q5', 'q6');
-insert into public.answers(id, question_id, position, answer_text, points)
+insert into public.answers(id, question_id, position, answer_text)
 select
   'q' || q.position::text || '-a' || a.position::text,
   q.id,
   a.position,
-  'Test answer ' || q.position::text || '-' || a.position::text,
-  a.points
+  'Test answer ' || q.position::text || '-' || a.position::text
 from public.questions q
-cross join (values (1, 50), (2, 40), (3, 30), (4, 20), (5, 10)) as a(position, points)
+cross join (values (1), (2), (3), (4), (5)) as a(position)
 where q.position between 3 and 6;
 
 select is((select count(*)::integer from public.questions), 7, 'seven contiguous questions are accepted');
@@ -40,7 +39,7 @@ select is((select count(*)::integer from public.answers), 35, 'each question has
 select lives_ok(
   $$select public.apply_game_action(
     repeat('b', 64), '00000000-0000-4000-8000-000000000031', 0,
-    'start_game', null, null, null
+    'start_game', null, null
   )$$,
   'complete content starts a seven-question game'
 );
@@ -51,7 +50,7 @@ select is((public.game_snapshot() ->> 'questionCount')::integer, 7, 'snapshot re
 select lives_ok(
   $$select public.apply_game_action(
     repeat('b', 64), '00000000-0000-4000-8000-000000000032', 1,
-    'next_question', null, null, null
+    'next_question', null, null
   )$$,
   'question one advances'
 );
@@ -59,7 +58,7 @@ select is(public.game_snapshot() ->> 'activeQuestionId', 'q2', 'question two bec
 select lives_ok(
   $$select public.apply_game_action(
     repeat('b', 64), '00000000-0000-4000-8000-000000000033', 2,
-    'next_question', null, null, null
+    'next_question', null, null
   )$$,
   'question two advances'
 );
@@ -67,7 +66,7 @@ select is(public.game_snapshot() ->> 'activeQuestionId', 'q3', 'question three b
 select lives_ok(
   $$select public.apply_game_action(
     repeat('b', 64), '00000000-0000-4000-8000-000000000034', 3,
-    'next_question', null, null, null
+    'next_question', null, null
   )$$,
   'question three advances'
 );
@@ -75,7 +74,7 @@ select is(public.game_snapshot() ->> 'activeQuestionId', 'q4', 'question four be
 select lives_ok(
   $$select public.apply_game_action(
     repeat('b', 64), '00000000-0000-4000-8000-000000000035', 4,
-    'next_question', null, null, null
+    'next_question', null, null
   )$$,
   'question four advances'
 );
@@ -83,7 +82,7 @@ select is(public.game_snapshot() ->> 'activeQuestionId', 'q5', 'question five be
 select lives_ok(
   $$select public.apply_game_action(
     repeat('b', 64), '00000000-0000-4000-8000-000000000036', 5,
-    'next_question', null, null, null
+    'next_question', null, null
   )$$,
   'question five advances'
 );
@@ -91,7 +90,7 @@ select is(public.game_snapshot() ->> 'activeQuestionId', 'q6', 'question six bec
 select lives_ok(
   $$select public.apply_game_action(
     repeat('b', 64), '00000000-0000-4000-8000-000000000037', 6,
-    'next_question', null, null, null
+    'next_question', null, null
   )$$,
   'question six advances'
 );
@@ -99,7 +98,7 @@ select is(public.game_snapshot() ->> 'activeQuestionId', 'q7', 'question seven b
 select lives_ok(
   $$select public.apply_game_action(
     repeat('b', 64), '00000000-0000-4000-8000-000000000038', 7,
-    'finish_game', null, null, null
+    'finish_game', null, null
   )$$,
   'game can finish on its seventh configured question'
 );

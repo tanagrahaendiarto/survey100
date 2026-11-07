@@ -1,11 +1,9 @@
 export type GameStatus = "READY" | "IN_PROGRESS" | "COMPLETED";
-export type Team = "A" | "B";
 
 export type GameAnswer = {
   id: string;
   position: number;
   text: string;
-  points: number;
 };
 
 export type GameView = {
@@ -13,7 +11,6 @@ export type GameView = {
   activeQuestionId: string;
   questionCount: number;
   version: number;
-  scores: Record<Team, number>;
   question: {
     id: string;
     position: number;

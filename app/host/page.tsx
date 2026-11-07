@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { AnswerBoard } from "@/components/answer-board";
 import { useGame } from "@/components/use-game";
 import type { GameAction } from "@/lib/game-command";
-import type { Team } from "@/lib/game-types";
 import {
   getGameAudioContext,
   playGameAudio,
@@ -19,7 +18,7 @@ export default function HostPage() {
   const [loginError, setLoginError] = useState("");
   const [takeover, setTakeover] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
-  const [message, setMessage] = useState("Pilih nomor jawaban untuk memulai.");
+  const [message, setMessage] = useState("Pilih nomor jawaban, lalu buka.");
   const [processing, setProcessing] = useState(false);
   const audioContext = useRef<AudioContext | null>(null);
   const game = host.game;
@@ -64,20 +63,26 @@ export default function HostPage() {
 
   async function runAction(
     action: GameAction,
-    details: { questionId?: string; answerId?: string; team?: Team } = {},
+    details: { questionId?: string; answerId?: string } = {},
   ) {
     if (processing) return false;
     setProcessing(true);
     const result = await host.act(action, details);
     setProcessing(false);
+    const successMessage =
+      action === "open_answer"
+        ? "Jawaban berhasil dibuka."
+        : action === "restart_game"
+          ? "Sesi dimulai ulang dari Pertanyaan 1."
+          : "Aksi berhasil disimpan.";
     setMessage(
-      result.error || (result.ok ? "Aksi berhasil disimpan." : "Aksi gagal."),
+      result.error || (result.ok ? successMessage : "Aksi gagal."),
     );
     if (result.ok) setSelected(null);
     return result.ok;
   }
 
-  async function confirmTeam(team: Team) {
+  async function openAnswer() {
     if (!selected || !question) {
       setMessage("Pilih nomor jawaban terlebih dahulu.");
       return;
@@ -96,28 +101,12 @@ export default function HostPage() {
     const openedSuccessfully = await runAction("open_answer", {
       questionId: question.id,
       answerId: selected,
-      team,
     });
     if (!openedSuccessfully) return;
 
     if (context) void playGameAudio(context, "correct");
     const soundError = await broadcastSound("correct");
     if (soundError) setMessage(`Jawaban dibuka. ${soundError}`);
-  }
-
-  async function sendWrong() {
-    const sound: BroadcastSound =
-      Math.random() < 0.5 ? "wrong-a" : "wrong-b";
-    const context = getGameAudioContext(audioContext.current);
-    audioContext.current = context;
-    if (context) {
-      void context.resume().catch(() => undefined);
-      void preloadGameAudio(context, [sound]);
-      void playGameAudio(context, sound);
-    }
-
-    const soundError = await broadcastSound(sound);
-    setMessage(soundError || "Event salah dikirim ke Display.");
   }
 
   async function broadcastSound(sound: BroadcastSound) {
@@ -135,7 +124,7 @@ export default function HostPage() {
   }
 
   async function startGame() {
-    if (!window.confirm("Mulai permainan dari Pertanyaan 1?")) return;
+    if (!window.confirm("Mulai sesi dari Pertanyaan 1?")) return;
     await runAction("start_game");
   }
 
@@ -151,23 +140,25 @@ export default function HostPage() {
   async function resetQuestion() {
     if (
       !window.confirm(
-        "Reset pertanyaan aktif dan hapus poin dari pertanyaan ini?",
+        "Tutup kembali semua jawaban pada pertanyaan ini?",
       )
     )
       return;
     await runAction("reset_question");
   }
 
-  async function resetGame() {
+  async function restartGame() {
     if (
-      !window.confirm("Reset seluruh permainan? Semua skor akan menjadi nol.")
+      !window.confirm(
+        "Ulang dari Pertanyaan 1? Semua jawaban yang sudah dibuka akan ditutup.",
+      )
     )
       return;
-    await runAction("reset_game");
+    await runAction("restart_game");
   }
 
   async function finishGame() {
-    if (!window.confirm("Akhiri permainan dan tampilkan hasil akhir?")) return;
+    if (!window.confirm("Akhiri sesi setelah pertanyaan ini?")) return;
     await runAction("finish_game");
   }
 
@@ -202,12 +193,8 @@ export default function HostPage() {
       }
       if (/^[1-5]$/.test(event.key)) {
         setSelected(currentQuestion.answers[Number(event.key) - 1]?.id ?? null);
-      } else if (event.key.toLowerCase() === "a") {
-        void confirmTeam("A");
-      } else if (event.key.toLowerCase() === "b") {
-        void confirmTeam("B");
-      } else if (event.key.toLowerCase() === "x") {
-        void sendWrong();
+      } else if (event.key === "Enter") {
+        void openAnswer();
       } else if (event.key === "Escape") {
         setSelected(null);
       } else if (
@@ -237,7 +224,7 @@ export default function HostPage() {
           <div className="kicker">AKSES OPERATOR</div>
           <h1 className="question-title">Masuk ke Host</h1>
           <p className="control-note">
-            Masukkan PIN Host untuk mengendalikan permainan.
+            Masukkan PIN Host untuk mengatur pembukaan jawaban.
           </p>
           <form
             onSubmit={(event) => {
@@ -355,27 +342,12 @@ export default function HostPage() {
       <div className="workspace">
         <div>
           <AnswerBoard state={game} />
-          {game.status === "COMPLETED" && (
-            <section className="control-card final-result">
-              <div className="kicker">HASIL AKHIR</div>
-              <h2>
-                {game.scores.A === game.scores.B
-                  ? "SERI"
-                  : game.scores.A > game.scores.B
-                    ? "TIM A MENANG"
-                    : "TIM B MENANG"}
-              </h2>
-              <p>
-                Tim A {game.scores.A} — {game.scores.B} Tim B
-              </p>
-            </section>
-          )}
         </div>
         <aside className="host-side">
           <section className="control-card">
             <h2 className="control-title">Buka jawaban</h2>
             <p className="control-note">
-              Pilih nomor, lalu tentukan tim yang mendapat poin.
+              Pilih nomor jawaban, lalu buka untuk ditampilkan di Display.
             </p>
             <div className="number-grid">
               {[1, 2, 3, 4, 5].map((position) => {
@@ -400,34 +372,23 @@ export default function HostPage() {
                 );
               })}
             </div>
-            <div className="team-actions">
-              <button
-                className="team-button"
-                onClick={() => void confirmTeam("A")}
-                disabled={unavailable || game.status !== "IN_PROGRESS"}
-              >
-                Tim A <span>· A</span>
-              </button>
-              <button
-                className="team-button"
-                onClick={() => void confirmTeam("B")}
-                disabled={unavailable || game.status !== "IN_PROGRESS"}
-              >
-                Tim B <span>· B</span>
-              </button>
-            </div>
+            <button
+              className="small-button full-width action-primary"
+              onClick={() => void openAnswer()}
+              disabled={
+                unavailable ||
+                game.status !== "IN_PROGRESS" ||
+                !selected ||
+                opened.has(selected)
+              }
+            >
+              Buka jawaban · Enter
+            </button>
             <p className="selection-note" role="status">
               {message}
             </p>
             <div className="control-divider" />
             <div className="utility-grid">
-              <button
-                className="small-button wrong-button"
-                onClick={() => void sendWrong()}
-                disabled={unavailable}
-              >
-                X · Salah
-              </button>
               <button
                 className="small-button"
                 onClick={() => void runAction("undo")}
@@ -447,7 +408,7 @@ export default function HostPage() {
           <section className="control-card">
             <h2 className="control-title">Pertanyaan</h2>
             <p className="control-note">
-              Perpindahan mengikuti arahan MC; hitungan duel dilakukan manual.
+              Perpindahan pertanyaan mengikuti arahan MC dan dikendalikan Host.
             </p>
             {game.status === "READY" ? (
               <>
@@ -456,7 +417,7 @@ export default function HostPage() {
                   onClick={() => void startGame()}
                   disabled={!game.contentReady || unavailable}
                 >
-                  Mulai Game
+                  Mulai sesi
                 </button>
                 {!!game.contentIssues?.length && (
                   <ul className="content-issues">
@@ -467,9 +428,16 @@ export default function HostPage() {
                 )}
               </>
             ) : game.status === "COMPLETED" ? (
-              <p className="control-note">
-                Game selesai. Reset Game untuk memulai lagi.
-              </p>
+              <div className="question-actions">
+                <p className="control-note">Semua pertanyaan sudah selesai.</p>
+                <button
+                  className="small-button action-primary"
+                  onClick={() => void restartGame()}
+                  disabled={unavailable}
+                >
+                  Ulang dari Pertanyaan 1
+                </button>
+              </div>
             ) : (
               <div className="question-actions">
                 {question.position < game.questionCount ? (
@@ -486,7 +454,7 @@ export default function HostPage() {
                     onClick={() => void finishGame()}
                     disabled={unavailable}
                   >
-                    Akhiri permainan
+                    Selesaikan sesi
                   </button>
                 )}
                 <button
@@ -496,16 +464,16 @@ export default function HostPage() {
                 >
                   Reset pertanyaan · R
                 </button>
+                <button
+                  className="small-button"
+                  onClick={() => void restartGame()}
+                  disabled={unavailable}
+                >
+                  Ulang dari Pertanyaan 1
+                </button>
               </div>
             )}
             <div className="secondary-actions">
-              <button
-                className="small-button"
-                onClick={() => void resetGame()}
-                disabled={processing}
-              >
-                Reset permainan
-              </button>
               <button
                 className="small-button"
                 onClick={() => window.open("/display", "_blank")}

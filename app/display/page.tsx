@@ -13,7 +13,6 @@ import {
 
 export default function DisplayPage() {
   const { game, connection, realtime, error } = useGame();
-  const [wrong, setWrong] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const audioEnabledRef = useRef(false);
   const audioContext = useRef<AudioContext | null>(null);
@@ -33,20 +32,16 @@ export default function DisplayPage() {
         if (
           typeof eventId !== "string" ||
           seen.has(eventId) ||
-          (sound !== "correct" && sound !== "wrong-a" && sound !== "wrong-b")
+          sound !== "correct"
         )
           return;
         seen.add(eventId);
         if (seen.size > 100) seen.delete(seen.values().next().value!);
-        if (sound === "wrong-a" || sound === "wrong-b") {
-          setWrong(true);
-          window.setTimeout(() => setWrong(false), 800);
-        }
         if (
           audioEnabledRef.current &&
           audioContext.current?.state === "running"
         ) {
-          void playGameAudio(audioContext.current, sound);
+          void playGameAudio(audioContext.current, "correct");
         }
       })
       .subscribe();
@@ -92,12 +87,7 @@ export default function DisplayPage() {
       await context.resume();
       audioEnabledRef.current = true;
       setAudioEnabled(true);
-      void preloadGameAudio(context, [
-        "correct",
-        "wrong-a",
-        "wrong-b",
-        "game-complete",
-      ]);
+      void preloadGameAudio(context, ["correct", "game-complete"]);
       if (pendingCompletionSound.current) {
         pendingCompletionSound.current = false;
         void playGameAudio(context, "game-complete");
@@ -117,7 +107,7 @@ export default function DisplayPage() {
   );
 
   return (
-    <main className={`display-shell ${wrong ? "wrong-flash" : ""}`}>
+    <main className="display-shell">
       <header className="display-header">
         <Link className="nav-brand" href="/">
           <span className="brand-mark">TS</span> TOP SURVEY
@@ -144,15 +134,6 @@ export default function DisplayPage() {
       {game ? (
         <section className="display-body">
           <AnswerBoard state={game} display />
-          {game.status === "COMPLETED" && (
-            <div className="display-result">
-              {game.scores.A === game.scores.B
-                ? "SERI"
-                : game.scores.A > game.scores.B
-                  ? "TIM A MENANG"
-                  : "TIM B MENANG"}
-            </div>
-          )}
         </section>
       ) : (
         <section className="display-body connection-message">

@@ -44,7 +44,6 @@ export async function POST(request: Request) {
       p_action: command.action,
       p_question_id: command.questionId ?? null,
       p_answer_id: command.answerId ?? null,
-      p_team: command.team ?? null,
     });
 
     if (error) {

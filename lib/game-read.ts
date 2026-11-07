@@ -6,7 +6,6 @@ type Snapshot = {
   activeQuestionId: string;
   questionCount: number;
   version: number;
-  scores: { A: number; B: number };
   revealedAnswerIds: string[];
 };
 
@@ -35,13 +34,12 @@ export async function publicGame(supabase: SupabaseClient) {
     id: string;
     position: number;
     text: string;
-    points: number;
   }[] = [];
 
   if (contentVerified && state.revealedAnswerIds.length) {
     const { data, error } = await supabase
       .from("revealed_answers")
-      .select("answer_id, answer_position, answer_text, points_awarded")
+      .select("answer_id, answer_position, answer_text")
       .eq("question_id", active.id)
       .order("answer_position");
     if (error) throw error;
@@ -49,7 +47,6 @@ export async function publicGame(supabase: SupabaseClient) {
       id: answer.answer_id,
       position: answer.answer_position,
       text: answer.answer_text,
-      points: answer.points_awarded,
     }));
   }
 
@@ -72,7 +69,7 @@ export async function hostGame(supabase: SupabaseClient) {
   const { data, error: questionsError } = await supabase
     .from("questions")
     .select(
-      "id, position, title, content_verified, answers(id, position, answer_text, points)",
+      "id, position, title, content_verified, answers(id, position, answer_text)",
     )
     .order("position");
   if (questionsError) throw questionsError;
@@ -86,7 +83,6 @@ export async function hostGame(supabase: SupabaseClient) {
       id: answer.id,
       position: answer.position,
       text: answer.answer_text,
-      points: answer.points,
     })),
   }));
   const current = questions.find((item) => item.id === state.activeQuestionId);
@@ -96,12 +92,11 @@ export async function hostGame(supabase: SupabaseClient) {
     answer_id: string;
     answer_position: number;
     answer_text: string;
-    points_awarded: number;
   }[] = [];
   if (state.revealedAnswerIds.length) {
     const { data: opened, error: openedError } = await supabase
       .from("revealed_answers")
-      .select("answer_id, answer_position, answer_text, points_awarded")
+      .select("answer_id, answer_position, answer_text")
       .eq("question_id", state.activeQuestionId);
     if (openedError) throw openedError;
     revealedAnswers = opened ?? [];
@@ -118,7 +113,6 @@ export async function hostGame(supabase: SupabaseClient) {
             ...answer,
             position: opened.answer_position,
             text: opened.answer_text,
-            points: opened.points_awarded,
           }
         : answer;
     }),
@@ -144,10 +138,8 @@ export async function hostGame(supabase: SupabaseClient) {
             ...(!item.contentVerified
               ? [`Q${item.position}: konten belum diverifikasi`]
               : []),
-            ...(item.answers.some(
-              (answer) => !answer.text.trim() || answer.points <= 0,
-            )
-              ? [`Q${item.position}: teks dan poin jawaban harus valid`]
+            ...(item.answers.some((answer) => !answer.text.trim())
+              ? [`Q${item.position}: teks jawaban harus diisi`]
               : []),
           ]),
         ];

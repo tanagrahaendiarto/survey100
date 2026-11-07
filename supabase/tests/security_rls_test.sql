@@ -11,17 +11,17 @@ set status = 'READY', active_question_id = 'q1', version = 0, updated_at = now()
 where singleton;
 
 insert into public.game_actions(
-  action_id, question_id, answer_id, answer_position, answer_text, points_awarded, team
+  action_id, question_id, answer_id, answer_position, answer_text
 )
 values
-  ('00000000-0000-4000-8000-000000000021', 'q1', 'q1-a1', 1, 'Bangun kesiangan', 50, 'A'),
-  ('00000000-0000-4000-8000-000000000022', 'q2', 'q2-a1', 1, 'Bisa bermain HP', 50, 'B');
+  ('00000000-0000-4000-8000-000000000021', 'q1', 'q1-a1', 1, 'Bangun kesiangan'),
+  ('00000000-0000-4000-8000-000000000022', 'q2', 'q2-a1', 1, 'Bisa bermain HP');
 insert into public.revealed_answers(
-  question_id, answer_id, answer_position, answer_text, points_awarded, team, action_id
+  question_id, answer_id, answer_position, answer_text, action_id
 )
 values
-  ('q1', 'q1-a1', 1, 'Bangun kesiangan', 50, 'A', '00000000-0000-4000-8000-000000000021'),
-  ('q2', 'q2-a1', 1, 'Bisa bermain HP', 50, 'B', '00000000-0000-4000-8000-000000000022');
+  ('q1', 'q1-a1', 1, 'Bangun kesiangan', '00000000-0000-4000-8000-000000000021'),
+  ('q2', 'q2-a1', 1, 'Bisa bermain HP', '00000000-0000-4000-8000-000000000022');
 
 select is(
   (select count(*)::integer
@@ -88,12 +88,12 @@ select ok(
   'Anonymous clients cannot call internal snapshot RPC'
 );
 select ok(
-  not has_function_privilege('anon', 'public.apply_game_action(text,uuid,bigint,text,text,text,text)', 'execute')
-  and not has_function_privilege('authenticated', 'public.apply_game_action(text,uuid,bigint,text,text,text,text)', 'execute'),
+  not has_function_privilege('anon', 'public.apply_game_action(text,uuid,bigint,text,text,text)', 'execute')
+  and not has_function_privilege('authenticated', 'public.apply_game_action(text,uuid,bigint,text,text,text)', 'execute'),
   'Client roles cannot call the mutation RPC'
 );
 select ok(
-  has_function_privilege('service_role', 'public.apply_game_action(text,uuid,bigint,text,text,text,text)', 'execute'),
+  has_function_privilege('service_role', 'public.apply_game_action(text,uuid,bigint,text,text,text)', 'execute'),
   'Only the server role can call the mutation RPC'
 );
 select ok(

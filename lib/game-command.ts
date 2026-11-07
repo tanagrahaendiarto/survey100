@@ -7,6 +7,7 @@ const actions = [
   "finish_game",
   "reset_question",
   "reset_game",
+  "restart_game",
 ] as const;
 
 export type GameAction = (typeof actions)[number];
@@ -17,7 +18,6 @@ export type GameCommand = {
   action: GameAction;
   questionId?: string;
   answerId?: string;
-  team?: "A" | "B";
 };
 
 export function parseGameCommand(input: unknown): GameCommand | null {
@@ -49,8 +49,7 @@ export function parseGameCommand(input: unknown): GameCommand | null {
     body.questionId.length > 80 ||
     typeof body.answerId !== "string" ||
     body.answerId.length === 0 ||
-    body.answerId.length > 80 ||
-    (body.team !== "A" && body.team !== "B")
+    body.answerId.length > 80
   ) {
     return null;
   }
@@ -59,6 +58,5 @@ export function parseGameCommand(input: unknown): GameCommand | null {
     ...command,
     questionId: body.questionId,
     answerId: body.answerId,
-    team: body.team,
   };
 }
