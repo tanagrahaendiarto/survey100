@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Top Survey — UNPAD × IPB",
+  title: "Top Survey UNPAD × IPB",
   description: "Permainan survei interaktif untuk Studi Banding UNPAD × IPB.",
 };
 
