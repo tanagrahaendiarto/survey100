@@ -15,11 +15,19 @@ export function AnswerBoard({
       (state.revealedAnswers ?? []).map((answer) => [answer.position, answer]),
     );
     return (
-      <>
+      <section className="display-board" aria-label="Papan permainan">
         <div className="display-kicker">
           PERTANYAAN {String(question.position).padStart(2, "0")} / {questionCount}
         </div>
         <h1 className="display-question">{question.title}</h1>
+        <aside
+          className="display-team-score display-team-score-a"
+          aria-label={`Skor Tim A: ${scores.A} poin`}
+        >
+          <span className="display-team-score-label">TIM A</span>
+          <strong className="display-team-score-value">{scores.A}</strong>
+          <span className="display-team-score-caption">POIN</span>
+        </aside>
         <div className="display-answers">
           {[1, 2, 3, 4, 5].map((position) => {
             const answer = opened.get(position);
@@ -41,18 +49,18 @@ export function AnswerBoard({
             );
           })}
         </div>
+        <aside
+          className="display-team-score display-team-score-b"
+          aria-label={`Skor Tim B: ${scores.B} poin`}
+        >
+          <span className="display-team-score-label">TIM B</span>
+          <strong className="display-team-score-value">{scores.B}</strong>
+          <span className="display-team-score-caption">POIN</span>
+        </aside>
         <div className="display-footer">
           <span>STUDI BANDING 2026</span>
-          <div className="display-score">
-            <strong>
-              TIM A <b>{scores.A}</b>
-            </strong>
-            <strong>
-              TIM B <b className="team-b-score">{scores.B}</b>
-            </strong>
-          </div>
         </div>
-      </>
+      </section>
     );
   }
 
