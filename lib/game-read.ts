@@ -77,7 +77,7 @@ export async function hostGame(supabase: SupabaseClient) {
   const questions = (data ?? []).map((item) => ({
     id: item.id,
     position: item.position,
-    title: item.title || "Menunggu materi survei dari UNPAD.",
+    title: item.title || "Menunggu materi survei acara.",
     contentVerified: item.content_verified,
     answers: (item.answers ?? []).map((answer) => ({
       id: answer.id,

@@ -6,9 +6,7 @@ export default function HomePage() {
       <div className="landing-top">
         <span className="brand-mark">TS</span>
         <span>TOP SURVEY</span>
-        <span className="event-tag">
-          UNPAD <i>×</i> IPB
-        </span>
+        <span className="event-tag">Welcoming Party G-SPARK</span>
       </div>
       <section className="hero">
         <div className="eyebrow">
@@ -37,7 +35,7 @@ export default function HomePage() {
         </div>
       </section>
       <div className="landing-foot">
-        <span>STUDI BANDING 2026</span>
+        <span>WELCOMING PARTY G-SPARK 2026</span>
         <span>
           DIRANCANG UNTUK LAYAR PANGGUNG <b>↗</b>
         </span>

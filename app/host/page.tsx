@@ -342,7 +342,7 @@ export default function HostPage() {
       </header>
       <div className="page-heading">
         <div>
-          <div className="kicker">PANEL OPERATOR · UNPAD × IPB · SOAL 20 NOV 2026</div>
+          <div className="kicker">PANEL OPERATOR · WELCOMING PARTY G-SPARK · SOAL 20 NOV 2026</div>
           <h1>Panel Host</h1>
         </div>
         <span className="question-count">

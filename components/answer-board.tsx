@@ -39,7 +39,7 @@ export function AnswerBoard({
           })}
         </div>
         <div className="display-footer">
-          <span>STUDI BANDING 2026 · SOAL 20 NOV 2026</span>
+          <span>WELCOMING PARTY G-SPARK 2026 · SOAL 20 NOV 2026</span>
         </div>
       </section>
     );
@@ -78,7 +78,7 @@ export function AnswerBoard({
       </div>
       <div className="board-foot">
         <span>{opened.size} / 5 JAWABAN TERBUKA</span>
-        <span>TOP SURVEY · UNPAD × IPB</span>
+        <span>TOP SURVEY · WELCOMING PARTY G-SPARK</span>
       </div>
     </section>
   );
