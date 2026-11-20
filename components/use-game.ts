@@ -17,7 +17,9 @@ export function useGame(host = false) {
 
   const refresh = useCallback(async () => {
     try {
-      const response = await fetch(endpoint, { cache: "no-store" });
+      const response = await fetch(`${endpoint}?cb=${Date.now()}`, {
+        cache: "no-store",
+      });
       const body = (await response.json()) as GameView & ApiError;
 
       if (response.status === 401 && host) {

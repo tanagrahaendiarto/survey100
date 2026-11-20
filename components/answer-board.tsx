@@ -39,7 +39,7 @@ export function AnswerBoard({
           })}
         </div>
         <div className="display-footer">
-          <span>STUDI BANDING 2026</span>
+          <span>STUDI BANDING 2026 · SOAL 20 NOV 2026</span>
         </div>
       </section>
     );
