@@ -125,7 +125,10 @@ export async function PATCH(request: Request) {
     });
     if (error?.message === "HOST_LEASE_EXPIRED")
       return json(
-        { error: "Host lease kedaluwarsa. Login atau takeover kembali." },
+        {
+          error:
+            "Sesi Host berakhir (logout atau diambil alih Host lain). Login kembali.",
+        },
         401,
       );
     if (error) throw error;

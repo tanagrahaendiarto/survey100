@@ -288,8 +288,9 @@ export default function HostPage() {
             </button>
           )}
           <p className="notice">
-            Host lease diperbarui otomatis. Jika Host lama terputus, lease
-            kedaluwarsa setelah 60 detik.
+            Host lease diperbarui otomatis setiap 15 detik, termasuk saat tab
+            kembali aktif. Lease baru berakhir 5 menit setelah Host benar-benar
+            terputus.
           </p>
         </section>
       </main>

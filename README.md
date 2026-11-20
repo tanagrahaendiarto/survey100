@@ -14,7 +14,7 @@ Persyaratan: Node.js 24.x, npm, dan proyek Supabase. Versi ini dipakai agar coco
 
 2. Salin `.env.example` ke `.env.local`, lalu isi URL Supabase, publishable key, secret key, PIN Host, dan `HOST_RATE_LIMIT_SALT` acak minimal 16 karakter. Jangan pernah menaruh secret key dengan awalan `NEXT_PUBLIC_`.
 
-3. Siapkan database. Untuk Supabase lokal, jalankan `supabase start`; migrasi dan `supabase/seed.sql` akan diterapkan oleh konfigurasi lokal. Seed menyiapkan tujuh pertanyaan DEMO karangan dengan lima jawaban per pertanyaan agar alur bisa dicoba dari awal sampai akhir. Konten ini bukan hasil survei acara. Untuk proyek Cloud, tinjau dan terapkan migrasi melalui prosedur rilis proyek; jangan gunakan seed demo.
+3. Siapkan database. Untuk Supabase lokal, jalankan `supabase start`; migrasi dan `supabase/seed.sql` akan diterapkan oleh konfigurasi lokal. Seed menyiapkan enam pertanyaan kuis mahasiswa dengan lima jawaban per pertanyaan agar alur bisa dicoba dari awal sampai akhir. Untuk proyek Cloud, tinjau dan terapkan migrasi melalui prosedur rilis proyek; jangan gunakan seed demo.
 
 4. Jalankan web:
 
@@ -28,7 +28,7 @@ Persyaratan: Node.js 24.x, npm, dan proyek Supabase. Versi ini dipakai agar coco
 
 ## Menyiapkan konten acara
 
-Setup tes berisi tujuh pertanyaan dengan lima jawaban per pertanyaan. Tidak ada poin atau pengelompokan tim; Host dapat membuka jawaban dan mengulang sesi dari Pertanyaan 1. Set `content_verified = true` hanya setelah penyelenggara memeriksa pertanyaan dan jawaban.
+Setup tes berisi enam pertanyaan dengan lima jawaban per pertanyaan. Tidak ada poin atau pengelompokan tim; Host dapat membuka jawaban dan mengulang sesi dari Pertanyaan 1. Set `content_verified = true` hanya setelah penyelenggara memeriksa pertanyaan dan jawaban.
 
 ## Pemeriksaan dan produksi
 

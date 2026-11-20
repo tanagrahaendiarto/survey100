@@ -37,6 +37,13 @@ export async function POST(request: Request) {
     const tokenHash = await activeHostTokenHash(supabase);
     if (!tokenHash) return json({ error: "Host tidak terotorisasi." }, 401);
 
+    // Renew (or reclaim) the lease before mutating so a lapsed heartbeat never
+    // turns a valid Host action into an unexpected logout.
+    const { error: leaseError } = await supabase.rpc("heartbeat_host_lease", {
+      p_token_hash: tokenHash,
+    });
+    if (leaseError) return gameError(leaseError.message);
+
     const { data, error } = await supabase.rpc("apply_game_action", {
       p_token_hash: tokenHash,
       p_request_id: command.requestId,

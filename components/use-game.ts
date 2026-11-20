@@ -85,12 +85,12 @@ export function useGame(host = false) {
   useEffect(() => {
     if (!host || !authorized) return;
 
-    const timer = window.setInterval(async () => {
+    async function heartbeat() {
       try {
         const response = await fetch("/api/host/session", { method: "PATCH" });
         if (response.status === 401) {
           setAuthorized(false);
-          setError("Host lease kedaluwarsa. Login atau takeover kembali.");
+          setError("Sesi Host berakhir. Login kembali.");
         } else if (!response.ok) {
           setConnection("offline");
         } else {
@@ -99,9 +99,23 @@ export function useGame(host = false) {
       } catch {
         setConnection("offline");
       }
-    }, 15_000);
+    }
 
-    return () => window.clearInterval(timer);
+    // Renew immediately when the tab comes back or the network returns:
+    // background tabs throttle timers, which previously let the lease lapse.
+    function onVisible() {
+      if (document.visibilityState === "visible") void heartbeat();
+    }
+
+    const timer = window.setInterval(() => void heartbeat(), 15_000);
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("online", onVisible);
+
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("online", onVisible);
+    };
   }, [authorized, host]);
 
   const act = useCallback(
