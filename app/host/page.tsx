@@ -237,7 +237,7 @@ export default function HostPage() {
           <Link href="/">Keluar</Link>
         </header>
         <section className="control-card host-login">
-          <div className="kicker">AKSES OPERATOR</div>
+          <div className="kicker">AKSES OPERATOR · SOAL 20 NOV 2026</div>
           <h1 className="question-title">Masuk ke Host</h1>
           <p className="control-note">
             Masukkan PIN Host untuk mengatur pembukaan jawaban.

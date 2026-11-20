@@ -132,7 +132,7 @@ export default function DisplayPage() {
           <span className="brand-mark">TS</span> TOP SURVEY
         </Link>
         <span className="display-event">
-          STUDI BANDING <b>UNPAD × IPB</b>
+          STUDI BANDING <b>UNPAD × IPB</b> · SOAL 20 NOV 2026
         </span>
         <span className="display-state">
           {connection === "offline"
